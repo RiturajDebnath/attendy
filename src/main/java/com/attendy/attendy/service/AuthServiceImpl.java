@@ -28,6 +28,7 @@ public class AuthServiceImpl implements AuthService {
     private static final String SECRET_KEY = "9J5H9705gABGQ7McnT09Lq9aV4eQshzAJieM26WhWBhkFBZCnxc4V0EZynkkJm0u1LfH0a6RsmG";
 
     private SecretKey key = Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
+    private String tokenName = "AttendyRest";
 
     @Autowired
     public AuthServiceImpl(StudentService studentService) {
@@ -44,7 +45,7 @@ public class AuthServiceImpl implements AuthService {
         }
 
         for (Cookie cookie : cookies) {
-            if ("AttendyRest".equals(cookie.getName())) {
+            if (tokenName.equals(cookie.getName())) {
                 String JwtToken = cookie.getValue();
                 try {
                     Jws<Claims> claims = Jwts.parser()
@@ -90,7 +91,7 @@ public class AuthServiceImpl implements AuthService {
         String JwtToken = generateJwtToken(student.getEmail());
 
         // Create an HTTP-only cookie with the JWT token
-        ResponseCookie cookie = ResponseCookie.from("AttendyRest", JwtToken)
+        ResponseCookie cookie = ResponseCookie.from(tokenName, JwtToken)
                 .httpOnly(true)
                 .maxAge(3600 * 24 * 30 * 2) // 2 Months in seconds
                 .path("/")
