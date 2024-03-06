@@ -32,4 +32,9 @@ public class AttendanceServiceImpl implements AttendanceService {
     public void deleteAttendance(Long id) {
         attendanceRepository.deleteById(id);
     }
+
+    @Override
+    public List<Attendance> getAttendanceByStudentId(Long studentId) {
+        return attendanceRepository.getAttendanceByStudentId(studentId);
+    }
 }

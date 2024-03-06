@@ -9,4 +9,5 @@ public interface AttendanceService {
     Attendance getAttendanceById(Long id);
     Attendance saveAttendance(Attendance attendance);
     void deleteAttendance(Long id);
+    List<Attendance> getAttendanceByStudentId(Long studentId);
 }
