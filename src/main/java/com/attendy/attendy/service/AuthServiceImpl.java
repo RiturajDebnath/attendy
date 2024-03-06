@@ -2,6 +2,7 @@ package com.attendy.attendy.service;
 
 import com.attendy.attendy.dto.LoginRequest;
 import com.attendy.attendy.entity.Student;
+import com.attendy.attendy.entity.Teacher;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
@@ -25,14 +26,16 @@ import java.util.Map;
 public class AuthServiceImpl implements AuthService {
 
     private final StudentService studentService;
+    private final TeacherService teacherService;
     private static final String SECRET_KEY = "9J5H9705gABGQ7McnT09Lq9aV4eQshzAJieM26WhWBhkFBZCnxc4V0EZynkkJm0u1LfH0a6RsmG";
 
     private SecretKey key = Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
     private String tokenName = "AttendyRest";
 
     @Autowired
-    public AuthServiceImpl(StudentService studentService) {
+    public AuthServiceImpl(StudentService studentService, TeacherService teacherService) {
         this.studentService = studentService;
+        this.teacherService = teacherService;
     }
 
     @Override
@@ -59,15 +62,21 @@ public class AuthServiceImpl implements AuthService {
                     System.out.println(userEmail);
 
                     Student student = studentService.findByEmail(userEmail);
-                    if (student == null) {
+                    Teacher teacher = teacherService.findByEmail(userEmail);
+                    if (student == null && teacher == null) {
                         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token.");
                     }
 
                     Map<String, Object> response = new HashMap<>();
                     response.put("message", "Login successful");
-                    response.put("isStudent", true);
-                    response.put("isTeacher", false);
-                    response.put("user", student);
+                    if (teacher == null) {
+                        response.put("isTeacher", false);
+                        response.put("user", student);
+                    }
+                    else {
+                        response.put("isTeacher", true);
+                        response.put("user", teacher);
+                    }
                     return ResponseEntity.ok().body(response);
                 } catch (Exception e) {
                     return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token.");
@@ -80,15 +89,27 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public ResponseEntity<Object> login(@RequestBody LoginRequest loginRequest) {
+        boolean isTeacher = false;
+        String JwtToken;
         Student student = studentService.findByEmail(loginRequest.getEmail());
+        Teacher teacher = teacherService.findByEmail(loginRequest.getEmail());
 
-        if (student == null) {
+        if (student == null && teacher == null) {
             return ResponseEntity.notFound().build();
-        } else if (!student.getPassword().equals(loginRequest.getPassword())) {
-            return ResponseEntity.badRequest().body("Invalid credentials");
         }
 
-        String JwtToken = generateJwtToken(student.getEmail());
+        if (student == null) {
+            isTeacher = true;
+            if (!teacher.getPassword().equals(loginRequest.getPassword())) {
+                return ResponseEntity.badRequest().body("Invalid credentials");
+            }
+            JwtToken = generateJwtToken(teacher.getEmail());
+        } else {
+            if (!student.getPassword().equals(loginRequest.getPassword())) {
+                return ResponseEntity.badRequest().body("Invalid credentials");
+            }
+            JwtToken = generateJwtToken(student.getEmail());
+        }
 
         // Create an HTTP-only cookie with the JWT token
         ResponseCookie cookie = ResponseCookie.from(tokenName, JwtToken)
@@ -103,11 +124,9 @@ public class AuthServiceImpl implements AuthService {
 
         Map<String, Object> response = new HashMap<>();
         response.put("message", "Login successful");
-        response.put("isStudent", true);
-        response.put("isTeacher", false);
+        response.put("isTeacher", isTeacher);
         return ResponseEntity.ok().headers(headers).body(response);
 
-        // return ResponseEntity.ok().body("Login successful");
     }
 
     private String generateJwtToken(String userEmail) {
