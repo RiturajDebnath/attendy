@@ -1,14 +1,15 @@
-package com.attendy.attendy.service;
+package com.attendy.attendy.service.implementation;
 
 import com.attendy.attendy.entity.Student;
 import com.attendy.attendy.repository.StudentRepository;
+import com.attendy.attendy.service.interfaces.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class StudentServiceImpl implements StudentService{
+public class StudentServiceImpl implements StudentService {
 
     @Autowired
     private StudentRepository studentRepository;

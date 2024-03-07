@@ -1,8 +1,11 @@
-package com.attendy.attendy.service;
+package com.attendy.attendy.service.implementation;
 
 import com.attendy.attendy.dto.LoginRequest;
 import com.attendy.attendy.entity.Student;
 import com.attendy.attendy.entity.Teacher;
+import com.attendy.attendy.service.interfaces.AuthService;
+import com.attendy.attendy.service.interfaces.StudentService;
+import com.attendy.attendy.service.interfaces.TeacherService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;

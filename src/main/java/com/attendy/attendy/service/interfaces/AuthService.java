@@ -1,4 +1,4 @@
-package com.attendy.attendy.service;
+package com.attendy.attendy.service.interfaces;
 
 import com.attendy.attendy.dto.LoginRequest;
 import jakarta.servlet.http.HttpServletRequest;

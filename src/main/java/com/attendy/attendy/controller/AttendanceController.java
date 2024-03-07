@@ -1,7 +1,7 @@
 package com.attendy.attendy.controller;
 
 import com.attendy.attendy.entity.Attendance;
-import com.attendy.attendy.service.AttendanceService;
+import com.attendy.attendy.service.interfaces.AttendanceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

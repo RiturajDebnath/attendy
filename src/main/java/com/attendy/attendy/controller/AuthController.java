@@ -1,7 +1,7 @@
 package com.attendy.attendy.controller;
 
 import com.attendy.attendy.dto.LoginRequest;
-import com.attendy.attendy.service.AuthService;
+import com.attendy.attendy.service.interfaces.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
