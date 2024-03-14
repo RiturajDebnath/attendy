@@ -4,10 +4,7 @@ import com.attendy.attendy.dto.LoginRequest;
 import com.attendy.attendy.service.interfaces.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -17,11 +14,13 @@ public class AuthController {
         this.authService = authService;
     }
 
+    @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping("/verify")
     public ResponseEntity<Object> verifyToken(HttpServletRequest request) {
         return authService.verifyToken(request);
     }
 
+    @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping("/login")
     public ResponseEntity<Object> login(@RequestBody LoginRequest request) {
         return authService.login(request);
